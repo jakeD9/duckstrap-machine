@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.key
+*.pem
+id_rsa*
+
+# Node
+node_modules/
+
+# Logs
+.log
+
