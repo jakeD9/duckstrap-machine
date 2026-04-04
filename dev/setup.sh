@@ -6,9 +6,7 @@ source "$(dirname "$0")/../lib/utils.sh"
 info "Installing dev environment tools..."
 
 # Core
-install git
 install gh
-install curl
 install wget
 install unzip
 install jq
@@ -17,7 +15,6 @@ install fzf
 
 # Editors
 install neovim
-install code
 
 # Containers
 install docker

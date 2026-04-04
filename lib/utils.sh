@@ -13,7 +13,6 @@ NC='\033[0m'
 # ----------------------------
 # OS/Package Manager detection
 # ----------------------------
-
 OS="$(uname -s)"
 
 detect_pm() {
@@ -33,6 +32,9 @@ detect_pm() {
   fi
 }
 
+# ----------------------------
+# OS aware package installs
+# ----------------------------
 PM="$(detect_pm)"
 
 install() {
@@ -55,6 +57,51 @@ install() {
     *)
       error "No supported package manager found"
       return 1
+      ;;
+  esac
+}
+
+# ----------------------------
+# Symlink file util
+# ----------------------------
+link_file() {
+  local src="$1"
+  local dest="$2"
+
+  # If destination doesn't exist → just link
+  if [[ ! -e "$dest" ]]; then
+    ln -s "$src" "$dest"
+    success "Linked $dest → $src"
+    return
+  fi
+
+  # If already the correct symlink → do nothing
+  if [[ -L "$dest" && "$(readlink "$dest")" == "$src" ]]; then
+    success "$dest already linked"
+    return
+  fi
+
+  warn "$dest already exists"
+
+  echo "What would you like to do?"
+  echo "[o] Overwrite"
+  echo "[b] Backup and replace"
+  echo "[s] Skip"
+  read -rp "> " choice
+
+  case "$choice" in
+    o|O)
+      rm -rf "$dest"
+      ln -s "$src" "$dest"
+      success "Overwritten $dest"
+      ;;
+    b|B)
+      mv "$dest" "${dest}.backup.$(date +%s)"
+      ln -s "$src" "$dest"
+      success "Backed up and linked $dest"
+      ;;
+    *)
+      warn "Skipped $dest"
       ;;
   esac
 }
