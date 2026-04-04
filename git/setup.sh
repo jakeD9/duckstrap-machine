@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Load shared utilities
+# Resolve repo root relative to this script's location
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../lib/utils.sh"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Load shared utils
+source "$REPO_ROOT/utils.sh"
 
 info "🔧 Setting up Git configuration..."
 
@@ -89,4 +92,4 @@ if [[ "$TEST_SSH" == "y" ]]; then
 fi
 
 echo ""
-success "🎉 Git + SSH setup complete - happy coding!"
+success "🎉 Git + SSH setup complete"

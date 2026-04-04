@@ -5,7 +5,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-source "$REPO_ROOT/utils/utils.sh"
+source "$REPO_ROOT/utils.sh"
 
 
 info "==> Setting up Zsh environment"
@@ -29,14 +29,14 @@ else
 fi
 
 #############################################
-# 3. Symlink .zshrc
+# 3. Copy .zshrc
 #############################################
 
-read -p "Symlink .zshrc from repo? [y/N] " symlink_zshrc
+read -p "Copy .zshrc from repo? [y/N] " symlink_zshrc
 
 if [[ "$symlink_zshrc" =~ ^[Yy]$ ]]; then
-  ln -sf "$REPO_ROOT/zsh/zshrc" "$HOME/.zshrc"
-  success "==> .zshrc symlinked"
+  cp "$REPO_ROOT/shell/zsh/.zshrc" "$HOME/.zshrc"
+  success "==> .zshrc copied"
 fi
 
 #############################################
@@ -53,14 +53,14 @@ else
 fi
 
 #############################################
-# 5. Symlink p10k config
+# 5. Copy p10k config
 #############################################
 
-read -p "Symlink .p10k.zsh from repo? [y/N] " symlink_p10k
+read -p "Copy .p10k.zsh from repo? [y/N] " symlink_p10k
 
 if [[ "$symlink_p10k" =~ ^[Yy]$ ]]; then
-  ln -sf "$REPO_ROOT/p10k/.p10k.zsh" "$HOME/.p10k.zsh"
-  info "==> p10k config symlinked"
+  cp "$REPO_ROOT/shell/p10k/.p10k.zsh" "$HOME/.p10k.zsh"
+  info "==> p10k config copied"
 fi
 
 #############################################
@@ -72,8 +72,8 @@ install_kitty() {
 
   info "==> Installing Kitty v$version"
 
-  curl -L "https://sw.kovidgoyal.net/kitty/installer.sh" | sh /dev/stdin \
-    version="$version"
+  curl -L https://sw.kovidgoyal.net/kitty/installer.sh | \
+    env KITTY_VERSION=0.46.2 sh
 
   mkdir -p "$HOME/.local/bin"
 
@@ -87,16 +87,16 @@ else
 fi
 
 #############################################
-# 7. Symlink Kitty config
+# 7. Copy Kitty config
 #############################################
 
 mkdir -p "$HOME/.config/kitty"
 
-read -p "Symlink kitty.conf from repo? [y/N] " symlink_kitty
+read -p "Copy kitty.conf from repo? [y/N] " symlink_kitty
 
 if [[ "$symlink_kitty" =~ ^[Yy]$ ]]; then
-  ln -sf "$REPO_ROOT/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
-  echo "==> kitty.conf symlinked"
+  cp "$REPO_ROOT/shell/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
+  echo "==> kitty.conf copied"
 fi
 
 #############################################

@@ -2,7 +2,7 @@
 
 set -e
 
-source "$REPO_ROOT/utils/utils.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/utils.sh"
 
 #############################################
 # 1. Install stuff to get everything else

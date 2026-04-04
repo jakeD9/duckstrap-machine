@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source "$(dirname "$0")/../lib/utils.sh"
+# Resolve repo root relative to this script's location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Load shared utils
+source "$REPO_ROOT/utils.sh"
 
 EXT_FILE="$(dirname "$0")/extensions.txt"
 
