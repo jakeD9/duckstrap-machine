@@ -64,20 +64,29 @@ if [[ "$symlink_p10k" =~ ^[Yy]$ ]]; then
 fi
 
 #############################################
-# 6. Install Kitty (pinned version 0.46.2)
+# 6. Install Kitty
 #############################################
 
 install_kitty() {
-  local version="0.46.2"
-
-  info "==> Installing Kitty v$version"
-
-  curl -L https://sw.kovidgoyal.net/kitty/installer.sh | \
-    env KITTY_VERSION=0.46.2 sh
-
-  mkdir -p "$HOME/.local/bin"
-
-  ln -sf "$HOME/.local/kitty.app/bin/kitty" "$HOME/.local/bin/kitty"
+  case "$PM" in
+    brew)
+      info "==> Installing Kitty via Homebrew"
+      brew install --cask kitty
+      ;;
+    apt)
+      info "==> Installing Kitty via apt"
+      sudo apt update -y >/dev/null 2>&1
+      sudo apt install -y kitty
+      ;;
+    pacman)
+      info "==> Installing Kitty via pacman"
+      sudo pacman -S --noconfirm kitty
+      ;;
+    *)
+      error "No supported package manager found for Kitty"
+      return 1
+      ;;
+  esac
 }
 
 if ! command -v kitty >/dev/null 2>&1; then
