@@ -22,8 +22,31 @@ install fzf
 install neovim
 
 # Containers
-install docker
-install docker-compose
+read -rp "Install Docker Desktop or Docker CLI? [desktop/cli/skip] " docker_choice
+
+case "${docker_choice:-skip}" in
+  desktop)
+    case "$PM" in
+      brew)
+        info "Installing Docker Desktop via Homebrew"
+        brew install --cask docker
+        ;;
+      *)
+        warn "Docker Desktop install is only configured here for Homebrew. Skipping."
+        ;;
+    esac
+    ;;
+  cli)
+    install docker
+    install docker-compose
+    ;;
+  skip|"")
+    info "Skipping Docker installation"
+    ;;
+  *)
+    warn "Unrecognized Docker option '$docker_choice'. Skipping Docker installation."
+    ;;
+esac
 
 # Kubernetes
 install kubectl
@@ -31,7 +54,6 @@ install helm
 install k9s
 
 # Utilities
-install tmux
 install htop
 install tree
 
