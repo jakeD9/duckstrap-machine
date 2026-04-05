@@ -54,7 +54,7 @@ if [ ! -f "$SSH_KEY" ]; then
   read -p "No SSH key found. Generate one now? (y/n): " GEN_SSH
 
   if [[ "$GEN_SSH" == "y" ]]; then
-    read -p "Email for SSH key (usually same as Git email): " SSH_EMAIL
+    read -p "Username for SSH key: " SSH_EMAIL
 
     ssh-keygen -t ed25519 -C "$SSH_EMAIL"
 
@@ -72,10 +72,10 @@ fi
 # ----------------------------
 if [ -f "$HOME/.ssh/id_ed25519.pub" ]; then
   echo ""
-  info "📋 Your public SSH key (copy this into GitHub):"
-  success "------------------------------------------------"
+  info "📋 Your public SSH key (copy this into GitHub): \n"
+  echo "------------------------------------------------"
   cat "$HOME/.ssh/id_ed25519.pub"
-  success "------------------------------------------------"
+  echo "------------------------------------------------"
 fi
 
 
@@ -85,11 +85,10 @@ fi
 read -p "Test SSH connection to GitHub now? (y/n): " TEST_SSH
 
 if [[ "$TEST_SSH" == "y" ]]; then
-  info "Testing SSH connection..."
+  info "Testing SSH connection... \n"
   ssh -T git@github.com || true
   echo ""
   info "If successful, you should see: 'You've successfully authenticated'"
 fi
 
-echo ""
 success "🎉 Git + SSH setup complete"
