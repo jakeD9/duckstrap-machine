@@ -1,6 +1,6 @@
 # duckstrap-machine
 
-`duckstrap-machine` contains a collection of my personal machine bootstrap scripts for setting up a development environment on a new machine. It is package manager agnostic, but is geared towards macOS and linux operatign systems.
+`duckstrap-machine` contains a collection of my personal bootstrap scripts for setting up a development environment on a new machine. It is package manager agnostic, but is geared towards macOS and linux operatign systems.
 
 Its purpose is to keep machine setup repeatable, versioned, consistent, and easy to rerun. Instead of manually installing tools and rewriting config on every new machine, this repo groups the setup into focused scripts for shell, development tooling, VS Code, and Git/SSH.
 
