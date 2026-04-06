@@ -11,12 +11,13 @@ source "$REPO_ROOT/utils.sh"
 info "Installing dev environment tools..."
 
 # Core
-install gh
-install wget
-install unzip
-install jq
-install ripgrep
-install fzf
+install_packages \
+  gh \
+  wget \
+  unzip \
+  jq \
+  ripgrep \
+  fzf
 
 # Editors
 install neovim
@@ -37,8 +38,9 @@ case "${docker_choice:-skip}" in
     esac
     ;;
   cli)
-    install docker
-    install docker-compose
+    install_packages \
+      docker \
+      docker-compose
     ;;
   skip|"")
     info "Skipping Docker installation"
@@ -49,12 +51,14 @@ case "${docker_choice:-skip}" in
 esac
 
 # Kubernetes
-install kubectl
-install helm
-install k9s
+install_packages \
+  kubectl \
+  helm \
+  k9s
 
 # Utilities
-install htop
-install tree
+install_packages \
+  htop \
+  tree
 
 success "Dev environment setup complete"

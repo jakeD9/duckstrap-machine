@@ -6,12 +6,64 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$SCRIPT_DIR/utils.sh"
 
+MODE="dev"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  ./bootstrap.sh
+  ./bootstrap.sh --dev
+  ./bootstrap.sh --servermode
+  ./bootstrap.sh --k8smode
+  ./bootstrap.sh --help
+
+Modes:
+  --dev         Bootstrap a developer workstation (default)
+  --servermode  Bootstrap a baseline Ubuntu homelab box
+  --k8smode     Bootstrap a k3s node / GitOps VM
+EOF
+}
+
 run_setup() {
   local script_path="$1"
 
   info "Running $(basename "$(dirname "$script_path")") setup..."
   bash "$script_path"
 }
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --dev)
+      MODE="dev"
+      ;;
+    --servermode)
+      MODE="server"
+      ;;
+    --k8smode)
+      MODE="k8s"
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    *)
+      error "Unknown argument: $1"
+      usage
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+if [[ "$MODE" == "server" ]]; then
+  info "Routing to server bootstrap mode..."
+  exec bash "$SCRIPT_DIR/server/bootstrap.sh"
+fi
+
+if [[ "$MODE" == "k8s" ]]; then
+  info "Routing to k3s node bootstrap mode..."
+  exec bash "$SCRIPT_DIR/k8s/bootstrap.sh"
+fi
 
 cat <<'EOF'
                                                       ____
@@ -59,8 +111,9 @@ info "Bootstrapping machine..."
 #############################################
 
 info "Getting the basics first..."
-install curl
-install git
+install_packages \
+  curl \
+  git
 
 #############################################
 # 2. Run setup scripts in dependency order

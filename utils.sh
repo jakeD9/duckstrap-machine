@@ -37,6 +37,17 @@ detect_pm() {
 # ----------------------------
 PM="$(detect_pm)"
 
+command_exists() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+require_linux() {
+  if [[ "$OS" != "Linux" ]]; then
+    error "This script currently supports Linux only"
+    return 1
+  fi
+}
+
 install() {
   local package="$1"
 
@@ -61,23 +72,54 @@ install() {
   esac
 }
 
+install_if_missing() {
+  local command_name="$1"
+  local package_name="${2:-$1}"
+
+  if command_exists "$command_name"; then
+    success "$command_name already installed"
+    return 0
+  fi
+
+  install "$package_name"
+}
+
+install_packages() {
+  local package
+
+  for package in "$@"; do
+    install "$package"
+  done
+}
+
+prompt_yes_no() {
+  local prompt="$1"
+  local default_answer="${2:-N}"
+  local reply
+
+  read -rp "$prompt [$default_answer] " reply
+  reply="${reply:-$default_answer}"
+
+  [[ "$reply" =~ ^[Yy]$ ]]
+}
+
 # ----------------------------
-# Symlink file util
+# Copy file util
 # ----------------------------
-link_file() {
+copy_file() {
   local src="$1"
   local dest="$2"
 
-  # If destination doesn't exist → just link
+  # If destination doesn't exist, just copy it into place.
   if [[ ! -e "$dest" ]]; then
-    ln -s "$src" "$dest"
-    success "Linked $dest → $src"
+    cp "$src" "$dest"
+    success "Copied $src to $dest"
     return
   fi
 
-  # If already the correct symlink → do nothing
-  if [[ -L "$dest" && "$(readlink "$dest")" == "$src" ]]; then
-    success "$dest already linked"
+  # If the destination already matches the source, do nothing.
+  if cmp -s "$src" "$dest"; then
+    success "$dest already matches the repo copy"
     return
   fi
 
@@ -92,13 +134,13 @@ link_file() {
   case "$choice" in
     o|O)
       rm -rf "$dest"
-      ln -s "$src" "$dest"
-      success "Overwritten $dest"
+      cp "$src" "$dest"
+      success "Overwrote $dest"
       ;;
     b|B)
       mv "$dest" "${dest}.backup.$(date +%s)"
-      ln -s "$src" "$dest"
-      success "Backed up and linked $dest"
+      cp "$src" "$dest"
+      success "Backed up and copied $dest"
       ;;
     *)
       warn "Skipped $dest"

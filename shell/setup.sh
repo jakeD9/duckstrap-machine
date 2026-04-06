@@ -32,9 +32,7 @@ fi
 # 3. Copy .zshrc
 #############################################
 
-read -p "Copy .zshrc from repo? [y/N] " symlink_zshrc
-
-if [[ "$symlink_zshrc" =~ ^[Yy]$ ]]; then
+if prompt_yes_no "Copy .zshrc from repo?" "N"; then
   cp "$REPO_ROOT/shell/zsh/.zshrc" "$HOME/.zshrc"
   success "==> .zshrc copied"
 fi
@@ -56,9 +54,7 @@ fi
 # 5. Copy p10k config
 #############################################
 
-read -p "Copy .p10k.zsh from repo? [y/N] " symlink_p10k
-
-if [[ "$symlink_p10k" =~ ^[Yy]$ ]]; then
+if prompt_yes_no "Copy .p10k.zsh from repo?" "N"; then
   cp "$REPO_ROOT/shell/p10k/.p10k.zsh" "$HOME/.p10k.zsh"
   info "==> p10k config copied"
 fi
@@ -101,9 +97,7 @@ fi
 
 mkdir -p "$HOME/.config/kitty"
 
-read -p "Copy kitty.conf from repo? [y/N] " symlink_kitty
-
-if [[ "$symlink_kitty" =~ ^[Yy]$ ]]; then
+if prompt_yes_no "Copy kitty.conf from repo?" "N"; then
   cp "$REPO_ROOT/shell/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
   echo "==> kitty.conf copied"
 fi

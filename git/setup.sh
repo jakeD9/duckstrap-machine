@@ -51,9 +51,7 @@ info "🔐 Checking SSH setup..."
 SSH_KEY="$HOME/.ssh/id_ed25519"
 
 if [ ! -f "$SSH_KEY" ]; then
-  read -p "No SSH key found. Generate one now? (y/n): " GEN_SSH
-
-  if [[ "$GEN_SSH" == "y" ]]; then
+  if prompt_yes_no "No SSH key found. Generate one now?" "N"; then
     read -p "Username for SSH key: " SSH_EMAIL
 
     ssh-keygen -t ed25519 -C "$SSH_EMAIL"
@@ -82,9 +80,7 @@ fi
 # ----------------------------
 # Test SSH connection
 # ----------------------------
-read -p "Test SSH connection to GitHub now? (y/n): " TEST_SSH
-
-if [[ "$TEST_SSH" == "y" ]]; then
+if prompt_yes_no "Test SSH connection to GitHub now?" "N"; then
   info "Testing SSH connection... \n"
   ssh -T git@github.com || true
   echo ""
