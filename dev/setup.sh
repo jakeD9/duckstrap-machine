@@ -51,10 +51,17 @@ case "${docker_choice:-skip}" in
 esac
 
 # Kubernetes
-install_packages \
-  kubectl \
-  helm \
-  k9s
+
+# Download kubectl to a temp file so we do not leave the binary in the repo.
+kubectl_tmp="$(mktemp)"
+curl -L -o "$kubectl_tmp" "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 "$kubectl_tmp" /usr/local/bin/kubectl
+rm -f "$kubectl_tmp"
+
+# k9s
+sudo snap install k9s
+
+
 
 # Utilities
 install_packages \
