@@ -10,6 +10,38 @@ source "$REPO_ROOT/utils.sh"
 
 info "Installing dev environment tools..."
 
+open_url_in_browser() {
+  local url="$1"
+  local browser_user="${SUDO_USER:-${USER:-}}"
+  local browser_uid=""
+  local browser_cmd=""
+
+  if command -v sensible-browser >/dev/null 2>&1; then
+    browser_cmd="sensible-browser"
+  elif command -v x-www-browser >/dev/null 2>&1; then
+    browser_cmd="x-www-browser"
+  elif command -v xdg-open >/dev/null 2>&1; then
+    browser_cmd="xdg-open"
+  else
+    return 1
+  fi
+
+  if [[ -n "$browser_user" ]] && [[ "$browser_user" != "root" ]]; then
+    browser_uid="$(id -u "$browser_user" 2>/dev/null || true)"
+    if [[ -n "$browser_uid" ]]; then
+      nohup sudo -u "$browser_user" \
+        env DISPLAY="${DISPLAY:-:0}" \
+        XAUTHORITY="${XAUTHORITY:-/home/$browser_user/.Xauthority}" \
+        XDG_RUNTIME_DIR="/run/user/$browser_uid" \
+        "$browser_cmd" "$url" >/dev/null 2>&1 </dev/null &
+      return 0
+    fi
+  fi
+
+  nohup "$browser_cmd" "$url" >/dev/null 2>&1 </dev/null &
+  return 0
+}
+
 # Core
 install_packages \
   gh \
@@ -33,14 +65,14 @@ case "${docker_choice:-skip}" in
         brew install --cask docker
         ;;
       *)
-        warn "Docker Desktop install is only configured here for Homebrew. Skipping."
+        warn "Docker Desktop automatic install is only configured here for Homebrew."
+
+        info "Plese visit https://www.docker.com/ to download."
         ;;
     esac
     ;;
   cli)
-    install_packages \
-      docker \
-      docker-compose
+    warn "CLI not configured yet. Sorry!"
     ;;
   skip|"")
     info "Skipping Docker installation"
